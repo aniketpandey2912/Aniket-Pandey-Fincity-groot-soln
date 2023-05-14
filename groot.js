@@ -1,31 +1,42 @@
-// brute force - subarrays
-function findPies(pies, sweetness) {
-  let N = pies.length;
+// Recursion - subsequence method.
+// Assumption - in pies array, we will surely have one such cobination of sweetness which groot can consume.
 
-  // iterating each pie
-  for (let i = 0; i < N; i++) {
-    // if sweetness of pie is equal to desired sweetness, return index
-    if (pies[i] === sweetness) return [i];
+function findPies(pies, sweetness){
+  // using subsequence to get all consumable cobination in an array.
+  let ans = subsequence([],pies,sweetness,[])
 
-    // else, generating all subarrays in temp
-    let temp = [];
-    let index = [];
-    for (let j = i; j < N; j++) {
-      temp.push(pies[j]); // subarray of pie sweetness value
-      index.push(j); // subarray of corresponding indices
+  // we need to return any one consumable combination, so return indices corresponding to first cobination recieved in ans.
+  ans = ans[0];
 
-      // sum of current pie subarray
-      let sum = temp.reduce((a, b) => a + b, 0);
+  // finding indices to first combination from pies array.
+  ans = ans.map((el) => pies.indexOf(el))
 
-      // if sum of current subarray is equal to desired sweetness, return corresponding indices, else continue checking
-      if (sum === sweetness) {
-        return index;
-      }
-    }
-  }
+  // retunr answer
+  return ans;
+  
 }
 
-let ans = findPies([8, 4, 3, 2, 6, 5], 6);
-console.log(ans);
-ans = findPies([1, 2, 3, 2, 1], 6);
-console.log(ans);
+// subsequence function, to generate all possible combinations
+function subsequence(p,up,sweetness,ans) {
+  if(up.length <= 0){
+    let sum = p.reduce((a,b) => a+b,0);
+    if(sum===sweetness) ans.push([...p])
+    return sum;
+  }
+
+  let el = up[0];
+
+  subsequence([...p,el], up.slice(1),sweetness,ans); // including current element
+  subsequence(p, up.slice(1),sweetness,ans); // not including current element
+  return ans; // returning all consumable cobinations
+}
+
+
+let ans = findPies([1, 2, 3, 2, 1], 6)
+console.log("ans: ",ans)
+
+ans = findPies([8, 4, 3, 2, 6, 5], 6)
+console.log("ans: ",ans)
+
+ans = findPies([1,3,5], 6)
+console.log("ans: ",ans)
